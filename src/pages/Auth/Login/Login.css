@@ -1,0 +1,15 @@
+.login-page {
+    min-height: 100vh;
+    background-color: #f8e5a2;
+  }
+  
+  .login-container {
+    max-width: 900px;
+    background-color: #fff9e5;
+  }
+  
+  .login-image {
+    max-width: 80%;
+    height: auto;
+  }
+  
