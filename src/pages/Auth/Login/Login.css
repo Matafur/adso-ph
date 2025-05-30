@@ -1,15 +1,27 @@
-.login-page {
-    min-height: 100vh;
-    background-color: #f8e5a2;
-  }
-  
-  .login-container {
-    max-width: 900px;
-    background-color: #fff9e5;
-  }
-  
-  .login-image {
-    max-width: 80%;
-    height: auto;
-  }
-  
+.login-container {
+  background-color: #f6e7b4;
+}
+
+.carousel-section {
+  width: 50%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.carousel-section .carousel-inner,
+.carousel-section .carousel-item,
+.carousel-section img {
+  height: 100%;
+  object-fit: cover;
+  transition: none !important; /* Evita que afecte el layout */
+}
+
+.form-section {
+  width: 50%;
+  height: 100vh;
+}
+
+.carousel-inner{
+  padding: 5rem;
+  background: ghostwhite;
+}

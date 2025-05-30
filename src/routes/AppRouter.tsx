@@ -7,6 +7,7 @@ import Chat from "../pages/Chat/Chat";
 import CommonAreas from "../pages/commonAreas/commonAreas";
 import Marketplace from "../pages/Marketplace/marketPlace";
 import Payments from "../pages/Payments/payments";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
   return (
@@ -21,11 +22,11 @@ export default function AppRouter() {
 
         {/* Rutas con sidebar dentro del layout */}
         <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/CommonAreas" element={<CommonAreas />} />
-          <Route path="/Marketplace" element={<Marketplace />} />
-          <Route path="/Payments" element={<Payments />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+          <Route path="/CommonAreas" element={<ProtectedRoute><CommonAreas /></ProtectedRoute>} />
+          <Route path="/Marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+          <Route path="/Payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
         </Route>
 
         {/* Ruta para no encontradas */}

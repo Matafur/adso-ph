@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import sampleImage from "../../../assets/register-img.jpg"; // reemplaza si tienes una imagen
+import sampleImage from "../../../assets/register-img.jpg";
+import image2 from "../../../assets/San Joaquin.jpg";
 
 export default function Register() {
   const navigate = useNavigate();
+
+  // Estado para los datos del formulario
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -19,33 +22,103 @@ export default function Register() {
     aceptar: false,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const target = e.target as HTMLInputElement;
+  // Estado para mostrar error
+  const [error, setError] = useState<string | null>(null);
+
+  // Maneja cambios en inputs y selects
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const target = e.target;
     const { name, value, type } = target;
-    const checked = type === "checkbox" ? target.checked : undefined;
-  
-    setFormData({
-      ...formData,
+    const checked = type === "checkbox" ? (target as HTMLInputElement).checked : undefined;
+
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Datos del formulario:", formData);
-    navigate("/login");
+  // Maneja el submit del formulario
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(null);
+
+  if (formData.password !== formData.confirmarPassword) {
+    setError("Las contraseñas no coinciden");
+    return;
+  }
+
+  const formatDateToDDMMYYYY = (isoDate: string) => {
+    if (!isoDate) return "";
+    const [year, month, day] = isoDate.split("-");
+    return `${day}-${month}-${year}`;
   };
+
+  const formattedDate = formatDateToDDMMYYYY(formData.nacimiento);
+  console.log("Fecha original:", formData.nacimiento);
+  console.log("Fecha formateada:", formattedDate);
+
+  const payload = {
+    password: formData.password,
+    email: formData.correo,
+    nombres: formData.nombres,
+    appellidos: formData.apellidos,
+    numumeroDocumento: formData.identificacion,
+    fechaNacimiento: formattedDate,
+    telefono: formData.contacto,
+    datosApartmento: {
+      id: 9007199254740991,
+      ciudad: "string",
+      numeroApartamento: formData.apartamento,
+      numeroTorre: formData.torre,
+    },
+  };
+
+  try {
+    const res = await fetch("http://localhost:8080/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      setError(errorData.message || "Error en el registro");
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Registro exitoso:", data);
+
+    navigate("/login");
+  } catch (error) {
+    setError("Error de conexión con el servidor");
+    console.error(error);
+  }
+};
+
 
   return (
-    <div className="min-vh-100 d-flex" style={{ backgroundColor: "#f6e7b4" }}>
+    <div className="min-vh-100 d-flex" style={{ backgroundColor: "#ffffff" }}>
       {/* Imagen */}
-      <div className="d-none d-md-flex justify-content-center align-items-center col-md-6">
-        <img
-          src={sampleImage}
-          alt="registro"
-          className="img-fluid"
-          style={{ maxWidth: "60%", height: "auto" }}
-        />
+      <div className="carousel-section d-none d-md-block">
+        <div
+          id="carouselLogin"
+          className="carousel slide h-100"
+          data-bs-ride="carousel"
+          data-bs-interval="3000"
+          data-bs-pause="false"
+        >
+          <div className="carousel-inner h-100">
+            <div className="carousel-item active h-100">
+              <img src={sampleImage} className="d-block w-100 h-100" alt="Imagen 1" />
+            </div>
+            <div className="carousel-item h-100">
+              <img src={image2} className="d-block w-100 h-100" alt="Imagen 2" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Formulario */}
@@ -55,6 +128,10 @@ export default function Register() {
             ¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a>
           </h5>
           <h2 className="mb-4 text-center fw-bold">Crea una cuenta</h2>
+
+          {/* Mostrar error si existe */}
+          {error && <div className="alert alert-danger">{error}</div>}
+
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
@@ -163,6 +240,7 @@ export default function Register() {
                     value="Propietario"
                     onChange={handleChange}
                     required
+                    checked={formData.tipoResidente === "Propietario"}
                   />
                   <label className="form-check-label">Propietario</label>
                 </div>
@@ -174,6 +252,7 @@ export default function Register() {
                     value="Inquilino"
                     onChange={handleChange}
                     required
+                    checked={formData.tipoResidente === "Inquilino"}
                   />
                   <label className="form-check-label">Inquilino</label>
                 </div>
